@@ -3,6 +3,7 @@ package com.lucas.auditoria;
 import com.lucas.auditoria.models.Setor;
 import com.lucas.auditoria.models.Auditor;
 import com.lucas.auditoria.models.Auditoria;
+import com.lucas.auditoria.services.AuditoriaService;
 
 public class Main {
     public static void main(String[] args) {
@@ -24,5 +25,9 @@ public class Main {
 
         System.out.println("A auditoria foi realizada no setor: " + minhaAuditoria.getSetor().getNomeSetor());
         System.out.println("Auditor responsável: " + minhaAuditoria.getAuditor().getNomeAuditor());
+
+        AuditoriaService auditoriaService = new AuditoriaService();
+        double resultado = auditoriaService.calcularPorcentagem(10, 2);
+        System.out.println("Porcentagem: " + resultado + "%");
     }
 }
