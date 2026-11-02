@@ -12,12 +12,14 @@ public class PerguntaAuditoria {
     public void setCodPergunta(int codPergunta) {
         this.codPergunta = codPergunta;
     }
+
     public String getDescricao() {
         return descricao;
     }
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
     public String getTipoAuditoria() {
         return tipoAuditoria;
     }

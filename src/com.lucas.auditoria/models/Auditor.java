@@ -28,7 +28,7 @@ public class Auditor {
         this.turno = turno;
     }
 
-    public Setor getSetorSetor() {
+    public Setor getSetor() {
         return setor;
     }
     public void setSetor(Setor setor) {
