@@ -1,7 +1,12 @@
 package com.lucas.auditoria.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Setor {
 
+    @Id
     private String codSetor;
     private String nomeSetor;
     private String responsavelSetor;
@@ -31,5 +36,4 @@ public class Setor {
     public void setEmailSetor(String emailSetor) {
         this.emailSetor = emailSetor;
     }
-
 }

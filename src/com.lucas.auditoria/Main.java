@@ -4,38 +4,47 @@ import com.lucas.auditoria.models.Setor;
 import com.lucas.auditoria.models.Auditor;
 import com.lucas.auditoria.models.Auditoria;
 import com.lucas.auditoria.services.AuditoriaService;
+import com.lucas.auditoria.util.HibernateUtil;
+import org.hibernate.Session;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Main {
     public static void main(String[] args) {
-        
-        Setor setorEstamparia = new Setor();
-        setorEstamparia.setNomeSetor("Estamparia");
-        setorEstamparia.setCodSetor("10.1");
+        // 1. Passa na porta da fábrica que já está pronta
+        // Não estamos criando uma fábrica nova, só pegando a que o HibernateUtil fez.
+        org.hibernate.SessionFactory fabrica = HibernateUtil.getSessionFactory();
 
-        Auditor auditorEmpresa = new Auditor();
-        auditorEmpresa.setReAuditor(7830);
-        auditorEmpresa.setNomeAuditor("Lucas");
+        // 2. Contrata um operário (Abre uma Session)
+        Session operario = fabrica.openSession();
 
-        Auditoria minhaAuditoria = new Auditoria();
-        minhaAuditoria.setData(LocalDate.of(2026, 10, 20));
-        minhaAuditoria.setMaquina("Prensa 01");
+        // 3. Manda o operário começar a trabalhar (Abre a transação com o PostgreSQL)
+        operario.beginTransaction();
+        try {
+            // --- AQUI A MÁGICA ACONTECE ---
+            // Você cria seu objeto
+            Setor setor = new Setor();
+            setor.setCodSetor("10.1");
+            setor.setNomeSetor("Estamparia");
+            setor.setResponsavelSetor("Wagner");
+            setor.setEmailSetor("estammparia@zb.com.br");
 
-        minhaAuditoria.setSetor(setorEstamparia);
-        minhaAuditoria.setAuditor(auditorEmpresa);
+            // Manda o operário salvar
+            operario.persist(setor);
 
-        System.out.println("A auditoria foi realizada no setor: " + minhaAuditoria.getSetor().getNomeSetor());
-        System.out.println("Auditor responsável: " + minhaAuditoria.getAuditor().getNomeAuditor());
+            // Confirma o trabalho (Commit)
+            operario.getTransaction().commit();
+            System.out.println("Setor salvo com sucesso!");
 
-        DateTimeFormatter formatadorBR = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        String dataFormatada = minhaAuditoria.getData().format(formatadorBR);
-        System.out.println("Data de Auditoria: " + dataFormatada);
-
-        AuditoriaService auditoriaService = new AuditoriaService();
-        double resultado = auditoriaService.calcularPorcentagem(10, 2);
-        System.out.println("Porcentagem: " + resultado + "%");
+        } catch (Exception e) {
+            // Se der erro, manda o operário desfazer tudo (Rollback)
+            operario.getTransaction().rollback();
+            e.printStackTrace();
+        }finally {
+            // 4. Demite o operário (Fecha a Session) para não travar o banco
+            operario.close();
+        }
     }
 }
